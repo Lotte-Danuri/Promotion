@@ -25,7 +25,7 @@ public class PromotionRouter {
     @Bean
     public RouterFunction<ServerResponse> router() {
         return RouterFunctions.route()
-            .POST("/join", request -> promotionHandler.addPeople(request))
+            .GET("/join", request -> promotionHandler.addPeople(request))
             .GET("/check", request -> promotionHandler.check(request))
             .build();
     }
