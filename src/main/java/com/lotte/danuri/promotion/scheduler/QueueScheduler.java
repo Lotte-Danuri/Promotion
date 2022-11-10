@@ -16,7 +16,7 @@ public class QueueScheduler {
         this.redisService = redisService;
     }
 
-    @Scheduled(cron = "0 0/2 * * * ?")
+    @Scheduled(cron = "0 0/5 * * * ?")
     //@Scheduled(fixedDelay = 1000)
     private void checkScheduler() {
         if(redisService.validEnd()) {
