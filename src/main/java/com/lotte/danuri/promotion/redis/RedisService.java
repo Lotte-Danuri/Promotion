@@ -47,7 +47,7 @@ public class RedisService {
         long time = System.currentTimeMillis();
         //String value = Thread.currentThread().getName();
 
-        //log.info("대기열에 추가 - {} ({}초)", memberId, (int)time);
+        log.info("대기열에 추가 - {} ({}초)", memberId, (int)time);
         return redisTemplate.opsForZSet().add(waitKey, memberId, time);
 
     }
