@@ -16,7 +16,7 @@ public class PromotionScheduler {
         this.redisService = redisService;
     }
 
-    @Scheduled(cron = "0 6 20 * * ?")
+    @Scheduled(cron = "0 0/11 * * * ?")
     private void promotionScheduler() {
         if(redisService.getSizeOfWork(Promotion.PROMOTION) > 0) {
             redisService.publish(Promotion.PROMOTION);

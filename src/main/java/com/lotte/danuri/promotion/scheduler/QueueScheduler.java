@@ -16,7 +16,7 @@ public class QueueScheduler {
         this.redisService = redisService;
     }
 
-    @Scheduled(cron = "0 28 12 * * ?")
+    @Scheduled(cron = "0 0/10 * * * ?")
     private void checkScheduler() {
         if(redisService.validEnd()) {
             log.info("======= 프로모션이 종료되었습니다. =======");
