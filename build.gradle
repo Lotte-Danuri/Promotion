@@ -6,7 +6,7 @@ plugins {
 
 group = 'com.lotte.danuri'
 version = '0.0.1-SNAPSHOT'
-sourceCompatibility = '17'
+sourceCompatibility = "16"
 
 configurations {
     compileOnly {
@@ -30,6 +30,9 @@ dependencies {
     // redis
     implementation 'org.springframework.boot:spring-boot-starter-data-redis'
 
+    // kafka
+    implementation 'org.springframework.kafka:spring-kafka'
+
     annotationProcessor 'org.projectlombok:lombok'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'io.projectreactor:reactor-test'
@@ -44,3 +47,4 @@ dependencyManagement {
 tasks.named('test') {
     useJUnitPlatform()
 }
+targetCompatibility = JavaVersion.VERSION_16
