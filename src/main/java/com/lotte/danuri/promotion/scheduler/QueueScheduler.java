@@ -16,8 +16,8 @@ public class QueueScheduler {
         this.redisService = redisService;
     }
 
-    @Scheduled(cron = "0 0/5 * * * ?")
-    //@Scheduled(fixedDelay = 1000)
+    //@Scheduled(cron = "0 5-6 * * * ?")
+    @Scheduled(fixedDelay = 10000)
     private void checkScheduler() {
         if(redisService.validEnd()) {
             log.info("======= 프로모션이 종료되었습니다. =======");
@@ -27,6 +27,12 @@ public class QueueScheduler {
         }
         if(redisService.getSize(Promotion.PROMOTION) >= Promotion.PROMOTION.limit) {
             redisService.move(Promotion.PROMOTION);
+
+            redisService.publish(Promotion.PROMOTION);
+
+            redisService.delete(Promotion.PROMOTION);
+            redisService.setPromotionCount(Promotion.PROMOTION.limit);
         }
+
     }
 }

@@ -75,7 +75,7 @@ public class RedisService {
 
     public Long getWorkNumber(String workKey, String memberId) {
         Long rank = redisTemplate.opsForZSet().rank(workKey, memberId);
-        log.info("{}님의 작업열 위치는 {}등 입니다.", memberId, rank);
+        //log.info("{}님의 작업열 위치는 {}등 입니다.", memberId, rank);
 
         return rank;
     }
