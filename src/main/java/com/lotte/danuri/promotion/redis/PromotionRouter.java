@@ -1,17 +1,10 @@
 package com.lotte.danuri.promotion.redis;
 
-import static org.springframework.web.reactive.function.server.RequestPredicates.accept;
-import static org.springframework.web.reactive.function.server.RouterFunctions.route;
-
 import com.lotte.danuri.promotion.filter.CustomHandlerFilterFunction;
-import com.lotte.danuri.promotion.filter.TokenFilter;
 import com.lotte.danuri.promotion.handler.PromotionHandler;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
-import org.springframework.http.MediaType;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.server.RouterFunction;
 import org.springframework.web.reactive.function.server.RouterFunctions;
 import org.springframework.web.reactive.function.server.ServerResponse;
@@ -19,7 +12,6 @@ import org.springframework.web.reactive.function.server.ServerResponse;
 @Configuration
 public class PromotionRouter {
 
-    private Environment env;
     private PromotionHandler promotionHandler;
 
     public PromotionRouter(PromotionHandler promotionHandler) {
