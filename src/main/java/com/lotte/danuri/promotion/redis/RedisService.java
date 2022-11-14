@@ -52,17 +52,6 @@ public class RedisService {
 
     }
 
-    /*public void getOrder(Promotion promotion) {
-        final long start = FIRST_ELEMENT;
-        final long end = LAST_ELEMENT;
-
-        Set<Object> queue = redisTemplate.opsForZSet().range(promotion.waitKey, start, end);
-        queue.forEach(people -> {
-            Long rank = redisTemplate.opsForZSet().rank(promotion.waitKey, people);
-            log.info("'{}'님의 현재 대기열은 {}명 남았습니다.", people, rank);
-        });
-    }*/
-
     public Long getOrderNumber(String waitKey, String memberId) {
         if(this.promotionCount.getLimit() == 0) {
             return -1L;
@@ -81,41 +70,32 @@ public class RedisService {
     }
 
     public void move(Promotion promotion) {
-        final long start = FIRST_ELEMENT;
-        final long end = PUBLISH_SIZE - LAST_INDEX;
+        Object people = redisTemplate.opsForZSet().popMin(promotion.waitKey).getValue();
 
-        Set<Object> queue = redisTemplate.opsForZSet().range(promotion.waitKey, start, end);
-        queue.forEach(people -> {
-            if(validEnd()) {
-                return;
-            }
-            log.info("'{}님이 작업열로 이동되었습니다.", people);
-            redisTemplate.opsForZSet().remove(promotion.waitKey, people);
+        if(validEnd()) {
+            return;
+        }
+        log.info("'{}님이 작업열로 이동되었습니다.", people);
 
-            redisTemplate.opsForZSet().add(promotion.workKey, people, System.currentTimeMillis());
+        redisTemplate.opsForZSet().add(promotion.workKey, people, System.currentTimeMillis());
 
-            this.promotionCount.decrease();
-            log.info("promotionCount = {}", this.promotionCount.getLimit());
-        });
+        this.promotionCount.decrease();
+        log.info("promotionCount = {}", this.promotionCount.getLimit());
     }
 
     public void publish(Promotion promotion) {
-        final long start = FIRST_ELEMENT;
-        //final long end = PUBLISH_SIZE - LAST_INDEX;
 
-        Set<Object> queue = redisTemplate.opsForZSet().range(promotion.workKey, start, LIMIT);
-        queue.forEach(people -> {
-            log.info("'{}'님의 쿠폰이 발급되었습니다.", people);
-            redisTemplate.opsForZSet().remove(promotion.workKey, people);
+        Object people = redisTemplate.opsForZSet().popMin(promotion.workKey).getValue();
 
-            kafkaProducerService.send("promotion-coupon-insert",
-                PromotionReqDto.builder()
-                    .memberId(Long.parseLong((String) people))
-                    .promotionId(promotion.promotionId)
-                    .build());
+        log.info("'{}'님의 쿠폰이 발급되었습니다.", people);
+        redisTemplate.opsForZSet().remove(promotion.workKey, people);
 
-            //this.promotionCount.decrease();
-        });
+        kafkaProducerService.send("promotion-coupon-insert",
+            PromotionReqDto.builder()
+                .memberId(Long.parseLong((String) people))
+                .promotionId(promotion.promotionId)
+                .build());
+
     }
 
     public boolean validEnd() {

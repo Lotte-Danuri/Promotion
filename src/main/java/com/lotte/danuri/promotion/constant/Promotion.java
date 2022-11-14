@@ -5,7 +5,7 @@ import lombok.Getter;
 @Getter
 public enum Promotion {
 
-    PROMOTION("COUPON", "COUPON_WAIT", "COUPON_WORK", 30, 1L);
+    PROMOTION("COUPON", "COUPON_WAIT", "COUPON_WORK", 50, 1L);
 
     public String name;
     public String waitKey;
