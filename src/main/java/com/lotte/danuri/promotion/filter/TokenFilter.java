@@ -6,17 +6,20 @@ import io.jsonwebtoken.Jwts;
 import java.util.Date;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.common.errors.AuthorizationException;
+import org.springframework.core.annotation.Order;
 import org.springframework.core.env.Environment;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.stereotype.Component;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.server.ServerWebExchange;
 import org.springframework.web.server.WebFilter;
 import org.springframework.web.server.WebFilterChain;
 import reactor.core.publisher.Mono;
 
 @Component
+@CrossOrigin("*")
 @Slf4j
 public class TokenFilter implements WebFilter {
 
@@ -30,7 +33,6 @@ public class TokenFilter implements WebFilter {
     public Mono<Void> filter(ServerWebExchange exchange, WebFilterChain chain) {
 
         ServerHttpRequest request = exchange.getRequest();
-
         if(!request.getHeaders().containsKey(HttpHeaders.AUTHORIZATION)) {
             return Mono.error(new AuthorizationException("No Authorization Header"));
         }
@@ -84,7 +86,6 @@ public class TokenFilter implements WebFilter {
         Jws<Claims> claims = Jwts.parser().setSigningKey(env.getProperty("token.secret"))
             .parseClaimsJws(token);
 
-        //log.info(claims.getBody().getExpiration().toString());
         return claims.getBody().getExpiration().after(new Date());
 
     }
