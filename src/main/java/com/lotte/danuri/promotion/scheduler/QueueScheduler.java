@@ -31,7 +31,7 @@ public class QueueScheduler {
                 }
             }*/
             redisService.delete(Promotion.PROMOTION);
-            redisService.setPromotionCount(Promotion.PROMOTION.limit);
+            //redisService.setPromotionCount(Promotion.PROMOTION.limit);
 
             return;
         }
