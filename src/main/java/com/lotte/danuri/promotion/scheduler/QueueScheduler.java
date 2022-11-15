@@ -23,6 +23,14 @@ public class QueueScheduler {
             log.info("======= 프로모션이 종료되었습니다. =======");
             log.info("작업열 사이즈 = {}",redisService.getSizeOfWork(Promotion.PROMOTION));
 
+            Long size = redisService.getSizeOfWork(Promotion.PROMOTION);
+            if(size > 0) {
+                for(int i=0;i<size;i++) {
+                    redisService.move(Promotion.PROMOTION);
+                    redisService.publish(Promotion.PROMOTION);
+                }
+            }
+
             redisService.delete(Promotion.PROMOTION);
             redisService.setPromotionCount(Promotion.PROMOTION.limit);
 
