@@ -79,8 +79,6 @@ public class RedisService {
 
         redisTemplate.opsForZSet().add(promotion.workKey, people, System.currentTimeMillis());
 
-        this.promotionCount.decrease();
-        log.info("promotionCount = {}", this.promotionCount.getLimit());
     }
 
     public void publish(Promotion promotion) {
@@ -95,6 +93,9 @@ public class RedisService {
                 .memberId(Long.parseLong((String) people))
                 .promotionId(promotion.promotionId)
                 .build());
+
+        this.promotionCount.decrease();
+        log.info("promotionCount = {}", this.promotionCount.getLimit());
 
     }
 
