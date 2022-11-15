@@ -61,7 +61,7 @@ public class RedisService {
     public void move(Promotion promotion) {
         Object people = redisTemplate.opsForZSet().popMin(promotion.waitKey).getValue();
 
-        log.info("'{}님이 작업열로 이동되었습니다.", people);
+        //log.info("'{}님이 작업열로 이동되었습니다.", people);
 
         redisTemplate.opsForZSet().add(promotion.workKey, people, System.currentTimeMillis());
 
@@ -71,7 +71,7 @@ public class RedisService {
 
         Object people = redisTemplate.opsForZSet().popMin(promotion.workKey).getValue();
 
-        log.info("'{}'님의 쿠폰이 발급되었습니다.", people);
+        //log.info("'{}'님의 쿠폰이 발급되었습니다.", people);
         //redisTemplate.opsForZSet().remove(promotion.workKey, people);
 
         kafkaProducerService.send("promotion-coupon-insert",
