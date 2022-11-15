@@ -42,11 +42,22 @@ public class PromotionHandler {
             return ServerResponse.ok().contentType(MediaType.APPLICATION_JSON).bodyValue(msg);
         }
 
-        // -1 : 프로모션 종료, null : 대기열 존재 안함, 작업열 존재 -> 쿠폰 받은 거 성공
         Long rank = redisService.getOrderNumber(Promotion.PROMOTION.waitKey, memberId);
-        if(rank <= Promotion.PROMOTION.limit) {
-            String msg = "success";
-            return ServerResponse.ok().contentType(MediaType.APPLICATION_JSON).bodyValue(msg);
+
+        if(rank == null) {
+            Long workRank = redisService.getOrderNumber(Promotion.PROMOTION.workKey, memberId);
+
+            if(workRank == null) {
+                String msg = "waiting";
+                return ServerResponse.ok().contentType(MediaType.APPLICATION_JSON).bodyValue(msg);
+            }
+
+            if(workRank <= Promotion.PROMOTION.limit) {
+                String msg = "success";
+                return ServerResponse.ok().contentType(MediaType.APPLICATION_JSON).bodyValue(msg);
+            }
+
+            rank = workRank;
         }
 
         return ok().contentType(MediaType.APPLICATION_JSON).bodyValue(rank);
