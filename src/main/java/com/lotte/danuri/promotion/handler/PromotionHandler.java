@@ -39,6 +39,11 @@ public class PromotionHandler {
         String memberId = request.headers().header("memberId").get(0);
         //String promotionId = request.headers().header("promotionId").get(0);
 
+        if(redisService.validEnd()) {
+            String msg = "exited";
+            return ServerResponse.ok().contentType(MediaType.APPLICATION_JSON).bodyValue(msg);
+        }
+
         // -1 : 프로모션 종료, null : 대기열 존재 안함, 작업열 존재 -> 쿠폰 받은 거 성공
         Long rank = redisService.getOrderNumber(Promotion.PROMOTION.waitKey, memberId);
         if(rank == null) { // 대기열 존재 안할 때 -> 1. 작업열로 이동, 2. 대기열에 진입 조차 못함
