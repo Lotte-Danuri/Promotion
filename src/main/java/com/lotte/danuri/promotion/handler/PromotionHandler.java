@@ -25,7 +25,6 @@ public class PromotionHandler {
 
     public Mono<ServerResponse> addPeople(ServerRequest request) {
         String memberId = request.headers().header("memberId").get(0);
-        //String promotionId = request.headers().header("promotionId").get(0);
 
         Boolean result = redisService.addPerson(Promotion.PROMOTION.waitKey, memberId);
         if(result == null) {
@@ -37,7 +36,6 @@ public class PromotionHandler {
 
     public Mono<ServerResponse> check(ServerRequest request) {
         String memberId = request.headers().header("memberId").get(0);
-        //String promotionId = request.headers().header("promotionId").get(0);
 
         if(redisService.validEnd()) {
             String msg = "exited";
