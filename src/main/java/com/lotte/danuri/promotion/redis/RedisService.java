@@ -35,19 +35,11 @@ public class RedisService {
         this.promotionCount = new PromotionCount(queue);
     }
 
-    public void add(Promotion promotion) {
-        long time = System.currentTimeMillis();
-        String value = Thread.currentThread().getName();
-
-        redisTemplate.opsForZSet().add(promotion.waitKey, value, time);
-        log.info("대기열에 추가 - {} ({}초)", value, (int)time);
-    }
-
     public Boolean addPerson(String waitKey, String memberId) {
         long time = System.currentTimeMillis();
         //String value = Thread.currentThread().getName();
 
-        log.info("대기열에 추가 - {} ({}초)", memberId, (int)time);
+        //log.info("대기열에 추가 - {} ({}초)", memberId, (int)time);
         return redisTemplate.opsForZSet().add(waitKey, memberId, time);
 
     }
