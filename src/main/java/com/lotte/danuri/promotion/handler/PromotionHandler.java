@@ -37,8 +37,11 @@ public class PromotionHandler {
     public Mono<ServerResponse> check(ServerRequest request) {
         String memberId = request.headers().header("memberId").get(0);
 
-        if(redisService.validEnd()) {
+        Long sizeofWork = redisService.getSizeOfWork(Promotion.PROMOTION);
+        Long sizeOfWait = redisService.getSize(Promotion.PROMOTION);
+        if(sizeOfWait == 0 && sizeofWork == 0) {
             String msg = "exited";
+            redisService.setPromotionCount(Promotion.PROMOTION.limit);
             return ServerResponse.ok().contentType(MediaType.APPLICATION_JSON).bodyValue(msg);
         }
 
@@ -46,6 +49,7 @@ public class PromotionHandler {
 
         if(rank == null) {
             Long workRank = redisService.getOrderNumber(Promotion.PROMOTION.workKey, memberId);
+
 
             if(workRank == null) {
                 String msg = "waiting";
