@@ -44,7 +44,7 @@ public class PromotionHandler {
 
         // -1 : 프로모션 종료, null : 대기열 존재 안함, 작업열 존재 -> 쿠폰 받은 거 성공
         Long rank = redisService.getOrderNumber(Promotion.PROMOTION.waitKey, memberId);
-        if(rank == null) { // 대기열 존재 안할 때 -> 1. 작업열로 이동, 2. 대기열에 진입 조차 못함
+        if(rank <= Promotion.PROMOTION.limit) {
             String msg = "success";
             return ServerResponse.ok().contentType(MediaType.APPLICATION_JSON).bodyValue(msg);
         }

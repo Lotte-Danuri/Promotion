@@ -17,7 +17,7 @@ public class RedisService {
     private static final Long PUBLISH_SIZE = 100L;
     private static final Long LAST_INDEX = 1L;
 
-    private static final int LIMIT = 30;
+    private static final int LIMIT = Promotion.PROMOTION.limit;
 
     private PromotionCount promotionCount = new PromotionCount(LIMIT);
     private StringBuilder sb = new StringBuilder();
@@ -45,9 +45,6 @@ public class RedisService {
     }
 
     public Long getOrderNumber(String waitKey, String memberId) {
-        if(this.promotionCount.getLimit() == 0) {
-            return -1L;
-        }
         Long rank = redisTemplate.opsForZSet().rank(waitKey, memberId);
         //log.info("'{}'님의 현재 대기열은 {}명 남았습니다.", memberId, rank);
 
