@@ -15,6 +15,8 @@ import org.springframework.stereotype.Service;
 public class RedisService {
 
     private static final int LIMIT = Promotion.PROMOTION.limit;
+    private static final Long PUBLISH_SIZE = 100L;
+    private static final Long LAST_INDEX = 1L;
 
     private PromotionCount promotionCount = new PromotionCount(LIMIT);
     private StringBuilder sb = new StringBuilder();
@@ -56,12 +58,28 @@ public class RedisService {
     }
 
     public void move(Promotion promotion) {
-        Object people = redisTemplate.opsForZSet().popMin(promotion.waitKey).getValue();
+        /*Object people = redisTemplate.opsForZSet().popMin(promotion.waitKey).getValue();
 
         //log.info("'{}님이 작업열로 이동되었습니다.", people);
 
         redisTemplate.opsForZSet().add(promotion.workKey, people, System.currentTimeMillis());
-        this.promotionCount.decrease();
+        this.promotionCount.decrease();*/
+
+        final long start = 0L;
+        final long end = PUBLISH_SIZE - LAST_INDEX;
+
+        Set<Object> queue = redisTemplate.opsForZSet().range(promotion.waitKey, start, end);
+        queue.forEach(people -> {
+            if(validEnd()) {
+                return;
+            }
+            redisTemplate.opsForZSet().remove(promotion.waitKey, people);
+
+            redisTemplate.opsForZSet().add(promotion.workKey, people, System.currentTimeMillis());
+
+            this.promotionCount.decrease();
+            log.info("{}님 이동, promotionCount = {}", people, this.promotionCount.getLimit());
+        });
 
     }
 
