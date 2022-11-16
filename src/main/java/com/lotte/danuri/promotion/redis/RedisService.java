@@ -15,7 +15,7 @@ import org.springframework.stereotype.Service;
 public class RedisService {
 
     private static final int LIMIT = Promotion.PROMOTION.limit;
-    private static final Long PUBLISH_SIZE = 100L;
+    private static final Long PUBLISH_SIZE = 10L;
     private static final Long LAST_INDEX = 1L;
 
     private PromotionCount promotionCount = new PromotionCount(LIMIT);
