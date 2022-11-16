@@ -61,6 +61,7 @@ public class RedisService {
         //log.info("'{}님이 작업열로 이동되었습니다.", people);
 
         redisTemplate.opsForZSet().add(promotion.workKey, people, System.currentTimeMillis());
+        this.promotionCount.decrease();
 
     }
 
