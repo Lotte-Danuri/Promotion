@@ -108,7 +108,7 @@ public class RedisService {
 
             kafkaProducerService.send("promotion-coupon-insert",
                 PromotionReqDto.builder()
-                    .memberId((Long) people)
+                    .memberId(Long.parseLong((String) people))
                     .promotionId(promotion.promotionId)
                     .build());
 
