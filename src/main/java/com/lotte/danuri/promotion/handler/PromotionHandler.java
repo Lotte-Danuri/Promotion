@@ -47,11 +47,6 @@ public class PromotionHandler {
             Long workRank = redisService.getOrderNumber(Promotion.PROMOTION.workKey, memberId);
 
             if(workRank == null) {
-                String msg = "waiting";
-                return ServerResponse.ok().contentType(MediaType.APPLICATION_JSON).bodyValue(msg);
-            }
-
-            if(workRank <= Promotion.PROMOTION.limit) {
                 String msg = "success";
                 return ServerResponse.ok().contentType(MediaType.APPLICATION_JSON).bodyValue(msg);
             }
@@ -66,8 +61,12 @@ public class PromotionHandler {
 
     public Mono<ServerResponse> setCount() {
         log.info("Call setCount");
+
         redisService.setPromotionCount(Promotion.PROMOTION.limit);
         int count = redisService.getPromotionCount();
+
+        redisService.delete(Promotion.PROMOTION);
+
         return ok().bodyValue(count);
     }
 
