@@ -4,7 +4,6 @@ import static org.springframework.web.reactive.function.server.ServerResponse.ok
 
 import com.lotte.danuri.promotion.constant.Promotion;
 import com.lotte.danuri.promotion.redis.RedisService;
-import java.util.UUID;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
@@ -37,11 +36,8 @@ public class PromotionHandler {
     public Mono<ServerResponse> check(ServerRequest request) {
         String memberId = request.headers().header("memberId").get(0);
 
-        Long sizeofWork = redisService.getSizeOfWork(Promotion.PROMOTION);
-        Long sizeOfWait = redisService.getSize(Promotion.PROMOTION);
-        if(sizeOfWait == 0 && sizeofWork == 0) {
+        if(redisService.validEnd()) {
             String msg = "exited";
-            redisService.setPromotionCount(Promotion.PROMOTION.limit);
             return ServerResponse.ok().contentType(MediaType.APPLICATION_JSON).bodyValue(msg);
         }
 
@@ -49,7 +45,6 @@ public class PromotionHandler {
 
         if(rank == null) {
             Long workRank = redisService.getOrderNumber(Promotion.PROMOTION.workKey, memberId);
-
 
             if(workRank == null) {
                 String msg = "waiting";
@@ -62,6 +57,7 @@ public class PromotionHandler {
             }
 
             rank = workRank;
+
         }
 
         return ok().contentType(MediaType.APPLICATION_JSON).bodyValue(rank);

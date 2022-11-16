@@ -3,6 +3,8 @@ package com.lotte.danuri.promotion.redis;
 import com.lotte.danuri.promotion.constant.Promotion;
 import com.lotte.danuri.promotion.kafka.KafkaProducerService;
 import com.lotte.danuri.promotion.kafka.dto.PromotionReqDto;
+import java.util.EnumMap;
+import java.util.Map;
 import java.util.Set;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -11,11 +13,6 @@ import org.springframework.stereotype.Service;
 @Service
 @Slf4j
 public class RedisService {
-
-    private static final Long FIRST_ELEMENT = 0L;
-    private static final Long LAST_ELEMENT = -1L;
-    private static final Long PUBLISH_SIZE = 100L;
-    private static final Long LAST_INDEX = 1L;
 
     private static final int LIMIT = Promotion.PROMOTION.limit;
 
@@ -69,19 +66,34 @@ public class RedisService {
 
     public void publish(Promotion promotion) {
 
-        Object people = redisTemplate.opsForZSet().popMin(promotion.workKey).getValue();
+        /*Object people = redisTemplate.opsForZSet().popMin(promotion.workKey).getValue();
 
         //log.info("'{}'님의 쿠폰이 발급되었습니다.", people);
         //redisTemplate.opsForZSet().remove(promotion.workKey, people);
+
+        this.promotionCount.decrease();
+        log.info("promotionCount = {}", this.promotionCount.getLimit());
 
         kafkaProducerService.send("promotion-coupon-insert",
             PromotionReqDto.builder()
                 .memberId(Long.parseLong((String) people))
                 .promotionId(promotion.promotionId)
-                .build());
+                .build());*/
 
-        this.promotionCount.decrease();
-        log.info("promotionCount = {}", this.promotionCount.getLimit());
+        final long start = 0L;
+
+        Set<Object> queue = redisTemplate.opsForZSet().range(promotion.workKey, start, LIMIT);
+        queue.forEach(people -> {
+            log.info("'{}'님의 쿠폰이 발급되었습니다.", people);
+            redisTemplate.opsForZSet().remove(promotion.workKey, people);
+
+            kafkaProducerService.send("promotion-coupon-insert",
+                PromotionReqDto.builder()
+                    .memberId((Long) people)
+                    .promotionId(promotion.promotionId)
+                    .build());
+
+        });
 
     }
 
