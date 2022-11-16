@@ -64,4 +64,11 @@ public class PromotionHandler {
 
     }
 
+    public Mono<ServerResponse> setCount() {
+        log.info("Call setCount");
+        redisService.setPromotionCount(Promotion.PROMOTION.limit);
+        int count = redisService.getPromotionCount();
+        return ok().bodyValue(count);
+    }
+
 }

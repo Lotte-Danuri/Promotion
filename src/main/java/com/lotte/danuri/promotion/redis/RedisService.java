@@ -33,6 +33,9 @@ public class RedisService {
     public void setPromotionCount(int queue) {
         this.promotionCount = new PromotionCount(queue);
     }
+    public int getPromotionCount() {
+        return this.promotionCount.getLimit();
+    }
 
     public Boolean addPerson(String waitKey, String memberId) {
         long time = System.currentTimeMillis();
