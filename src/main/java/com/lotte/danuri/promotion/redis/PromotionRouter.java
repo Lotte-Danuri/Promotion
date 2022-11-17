@@ -27,7 +27,7 @@ public class PromotionRouter {
         return RouterFunctions.route()
             .GET("/join", request -> promotionHandler.addPeople(request))
             .GET("/check", request -> promotionHandler.check(request))
-            .GET("/set", request -> promotionHandler.setCount())
+            .GET("/set", request -> promotionHandler.setCount(request))
             .filter(new CustomHandlerFilterFunction())
             .build();
     }

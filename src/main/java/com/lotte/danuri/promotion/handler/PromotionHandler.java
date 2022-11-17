@@ -59,9 +59,11 @@ public class PromotionHandler {
 
     }
 
-    public Mono<ServerResponse> setCount() {
+    public Mono<ServerResponse> setCount(ServerRequest request) {
         log.info("Call setCount");
 
+        String size = request.headers().header("size").get(0);
+        redisService.setPublishSize(Long.parseLong(size));
         redisService.setPromotionCount(Promotion.PROMOTION.limit);
         int count = redisService.getPromotionCount();
 
