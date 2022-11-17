@@ -15,7 +15,7 @@ import org.springframework.stereotype.Service;
 public class RedisService {
 
     private static final int LIMIT = Promotion.PROMOTION.limit;
-    private static final Long PUBLISH_SIZE = 10L;
+    private Long publishSize = 10L;
     private static final Long LAST_INDEX = 1L;
 
     private PromotionCount promotionCount = new PromotionCount(LIMIT);
@@ -35,6 +35,9 @@ public class RedisService {
     }
     public int getPromotionCount() {
         return this.promotionCount.getLimit();
+    }
+    public void setPublishSize(Long size) {
+        this.publishSize = size;
     }
 
     public Boolean addPerson(String waitKey, String memberId) {
@@ -69,7 +72,7 @@ public class RedisService {
         this.promotionCount.decrease();*/
 
         final long start = 0L;
-        final long end = PUBLISH_SIZE - LAST_INDEX;
+        final long end = publishSize - LAST_INDEX;
 
         Set<Object> queue = redisTemplate.opsForZSet().range(promotion.waitKey, start, end);
         queue.forEach(people -> {
