@@ -63,8 +63,10 @@ public class PromotionHandler {
         log.info("Call setCount");
 
         String size = request.headers().header("size").get(0);
+        String limit = request.headers().header("limit").get(0);
+
         redisService.setPublishSize(Long.parseLong(size));
-        redisService.setPromotionCount(Promotion.PROMOTION.limit);
+        redisService.setPromotionCount(Integer.parseInt(limit));
         int count = redisService.getPromotionCount();
 
         redisService.delete(Promotion.PROMOTION);
